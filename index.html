@@ -382,8 +382,10 @@
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(data)
     }).then(function (res) {
-      if (!res.ok) throw new Error(res.status);
-      showThanks();
+      return res.json().then(function (j) {
+        if (!res.ok || !j || j.success === false || j.success === 'false') throw new Error();
+        showThanks();
+      });
     }).catch(function () {
       btn.disabled = false;
       btn.textContent = label;
