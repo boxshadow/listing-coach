@@ -302,11 +302,9 @@
   <section>
     <h2 id="list">Get on the list</h2>
     <div class="box">
-      <form action="https://formsubmit.co/qiaobinloverabbi@gmail.com" method="POST" id="waitlist">
+      <form action="https://formspree.io/f/xbggrqlw" method="POST" id="waitlist">
         <input type="hidden" name="_subject" value="Listing Coach — new signup">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_next" value="https://boxshadow.github.io/listing-coach#thanks">
-        <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="honey">
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="honey">
         <label for="email">Email</label>
         <input id="email" type="email" name="email" required placeholder="you@yourshop.com" autocomplete="email">
         <label for="count">How many listings do you have?</label>
@@ -377,13 +375,13 @@
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
-    fetch('https://formsubmit.co/ajax/qiaobinloverabbi@gmail.com', {
+    fetch(form.action, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(data)
     }).then(function (res) {
       return res.json().then(function (j) {
-        if (!res.ok || !j || j.success === false || j.success === 'false') throw new Error();
+        if (!res.ok || !j || j.ok !== true) throw new Error();
         showThanks();
       });
     }).catch(function () {
