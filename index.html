@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Listing Coach — find what's wrong with your Etsy listing before Etsy finds it</title>
+<meta name="description" content="A local-only checker for Etsy listings. Rules, tags, photos, and AI-sounding copy — diagnosed in your browser. No shop connection, no scraping, no monthly contract.">
+<link rel="canonical" href="https://boxshadow.github.io/listing-coach">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%23faf8f4'/%3E%3Cpath d='M8 9h16M8 16h11M8 23h7' stroke='%239a3a1e' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#faf8f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Listing Coach">
+<meta property="og:title" content="Find what's wrong with your Etsy listing — before Etsy finds it">
+<meta property="og:description" content="A local-only checker for Etsy listings: which rule you broke, in which field, and which lines read as AI-written. No shop connection, no scraping.">
+<meta property="og:url" content="https://boxshadow.github.io/listing-coach">
+<meta property="og:image" content="https://boxshadow.github.io/listing-coach/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Listing Coach — a local-only checker for Etsy listings">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Find what's wrong with your Etsy listing — before Etsy finds it">
+<meta name="twitter:description" content="Local-only Etsy listing checker. Rules, tags, photos, AI-sounding copy. No shop connection.">
+<meta name="twitter:image" content="https://boxshadow.github.io/listing-coach/og.png">
+<style>
+  :root {
+    --paper: #faf8f4;
+    --ink: #1a1714;
+    --ink-soft: #5c554c;
+    --ink-faint: #8d857a;
+    --rule: #ddd6ca;
+    --accent: #9a3a1e;
+    --accent-soft: #f0e4dd;
+    --card: #fffdf9;
+    --ok: #2f6b4f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #16130f;
+      --ink: #f0ebe3;
+      --ink-soft: #b3aa9c;
+      --ink-faint: #7d7568;
+      --rule: #322c25;
+      --accent: #e08a63;
+      --accent-soft: #2a1e17;
+      --card: #1d1915;
+      --ok: #6fae8c;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+    padding: 0 20px 72px;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+
+  /* ── 报头 ── */
+  header { padding: 34px 0 0; }
+  .kicker {
+    font: 600 11px/1 ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  }
+  h1 {
+    font-size: clamp(30px, 7vw, 46px);
+    line-height: 1.12;
+    letter-spacing: -.015em;
+    font-weight: 700;
+    margin: 30px 0 0;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lede {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 18px 0 0;
+    max-width: 56ch;
+  }
+  .meta {
+    font: 400 13px/1.6 ui-sans-serif, -apple-system, sans-serif;
+    color: var(--ink-faint);
+    margin: 20px 0 0;
+  }
+
+  /* ── hero CTA ── */
+  .hero-cta { margin: 26px 0 0; }
+  .hero-cta a {
+    display: inline-block;
+    font: 600 15px/1 ui-sans-serif, -apple-system, sans-serif;
+    color: #fff;
+    background: var(--accent);
+    text-decoration: none;
+    padding: 15px 22px;
+    border-radius: 3px;
+  }
+  .hero-cta a:hover { filter: brightness(1.08); }
+  .hero-cta a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .hero-note {
+    margin: 12px 0 0;
+    font: 400 12.5px/1.5 ui-sans-serif, sans-serif;
+    color: var(--ink-faint);
+  }
+
+  /* ── 引用 ── */
+  blockquote {
+    margin: 34px 0 0;
+    padding: 20px 0 4px 20px;
+    border-left: 2px solid var(--accent);
+    font-size: 17px;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  blockquote cite {
+    display: block;
+    margin-top: 12px;
+    font: 400 13px/1.5 ui-sans-serif, sans-serif;
+    font-style: normal;
+    color: var(--ink-faint);
+  }
+
+  /* ── 检查项 ── */
+  section { margin-top: 46px; }
+  h2 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    font-family: ui-sans-serif, -apple-system, sans-serif;
+    color: var(--ink-faint);
+    padding-bottom: 9px;
+    border-bottom: 1px solid var(--rule);
+  }
+  ul.checks { list-style: none; margin: 20px 0 0; padding: 0; }
+  ul.checks li {
+    padding: 13px 0;
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: baseline;
+  }
+  ul.checks li:last-child { border-bottom: 0; }
+  ul.checks .what { font-size: 16px; }
+  ul.checks .tag {
+    font: 600 10px/1 ui-sans-serif, sans-serif;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 6px 9px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  ul.checks .tag.plain { color: var(--ink-faint); background: transparent; border: 1px solid var(--rule); }
+
+  /* ── 差异 ── */
+  .diff { margin-top: 22px; display: grid; gap: 14px; }
+  .diff > div {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 15px 17px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .diff b { font-weight: 700; }
+  .diff .no { color: var(--ink-faint); }
+  .diff .yes { color: var(--ok); }
+  .diff .yes::before { content: "✓ "; font-weight: 700; }
+  .diff .no::before { content: "✕ "; font-weight: 700; }
+
+  /* ── 表单 ── */
+  .box {
+    margin-top: 22px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 22px 20px 24px;
+  }
+  label { display: block; font: 600 12px/1 ui-sans-serif, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
+  input[type=email], select {
+    width: 100%;
+    font: 16px/1.4 ui-sans-serif, -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 12px 13px;
+    margin-bottom: 12px;
+  }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  button {
+    width: 100%;
+    font: 600 15px/1 ui-sans-serif, sans-serif;
+    letter-spacing: .01em;
+    color: #fff;
+    background: var(--accent);
+    border: 0;
+    border-radius: 3px;
+    padding: 15px 18px;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(1.08); }
+  button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .fine {
+    margin: 14px 0 0;
+    font: 400 12.5px/1.55 ui-sans-serif, sans-serif;
+    color: var(--ink-faint);
+  }
+  .fine a { color: var(--ink-soft); }
+  .honey { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  button[disabled] { opacity: .65; cursor: default; }
+  #thanks .thanks-title { font-size: 20px; font-weight: 700; margin: 0 0 10px; }
+  #thanks .fine { margin-top: 0; }
+
+  /* ── FAQ ── */
+  .faq dt { font-weight: 700; margin-top: 20px; font-size: 16px; }
+  .faq dd { margin: 6px 0 0; color: var(--ink-soft); font-size: 15.5px; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font: 400 12.5px/1.6 ui-sans-serif, sans-serif;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 480px) {
+    ul.checks li { grid-template-columns: 1fr; gap: 8px; }
+    ul.checks .tag { justify-self: start; }
+    .kicker { flex-direction: column; gap: 4px; }
+    .kicker .kicker-sub { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">
+      <span>Listing Coach</span>
+      <span class="kicker-sub">Early access — one email when it’s ready</span>
+    </div>
+
+    <h1>Your listing is probably fine.<br>But you don’t <em>actually know</em> that.</h1>
+
+    <p class="lede">
+      Etsy’s own dashboard tells you one thing. The seller handbook tells another. The search algorithm
+      quietly changed again last month. Meanwhile you’re guessing — rewriting titles by hand and
+      wondering which advice to trust.
+    </p>
+
+    <blockquote>
+      “I never really know if they’re ‘good enough’ or if I’m missing something important.”
+      <cite>— r/EtsyDigitalSeller</cite>
+    </blockquote>
+
+    <p class="meta">
+      A Chrome extension that reads a listing you paste in, and tells you exactly what’s wrong —
+      which rule, which field, and why it matters. It runs entirely in your browser.
+    </p>
+
+    <p class="hero-cta"><a href="#list">Get the early build <span aria-hidden="true">→</span></a></p>
+    <p class="hero-note">Not built yet. Leave an email and you’ll get one message when it is — or one saying it isn’t.</p>
+  </header>
+
+  <section>
+    <h2>What it checks</h2>
+    <ul class="checks">
+      <li><span class="what">Title: length, word count, repeated words, “best”-style banned claims</span><span class="tag">Etsy rule</span></li>
+      <li><span class="what">Tags: how many slots you left empty, how many are single words, duplicates</span><span class="tag">Etsy rule</span></li>
+      <li><span class="what">Photos: cover image under 2000px, missing alt text, wrong aspect ratio</span><span class="tag">Etsy rule</span></li>
+      <li><span class="what">Copy that reads like AI — “crafted with remarkable attention to detail”</span><span class="tag plain">Buyer turnoff</span></li>
+      <li><span class="what">Description: missing return policy, empty fields, unproven claims</span><span class="tag plain">Risk</span></li>
+      <li><span class="what">A plain-English rewrite of the specific lines that read as machine-written</span><span class="tag plain">Fix</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What it deliberately doesn’t do</h2>
+    <div class="diff">
+      <div><span class="no">No shop connection.</span> It never asks for access to your store or your Etsy tokens.</div>
+      <div><span class="no">No scraping.</span> It doesn’t fetch competitor listings, so it can’t get blocked and can’t break.</div>
+      <div><span class="no">No AI-written listings.</span> Buyers scroll past AI-sounding copy. This tells you what to fix — it doesn’t hand you slop.</div>
+      <div><span class="yes">Runs locally.</span> Your listing text never leaves your browser.</div>
+      <div><span class="yes">Plain answers.</span> Not a “7/10” score — “your tag slot 6 repeats a word from slot 2”.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="list">Get on the list</h2>
+    <div class="box">
+      <form action="https://formsubmit.co/idafoo@sina.com" method="POST" id="waitlist">
+        <input type="hidden" name="_subject" value="Listing Coach — new signup">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://boxshadow.github.io/listing-coach#thanks">
+        <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="honey">
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" required placeholder="you@yourshop.com" autocomplete="email">
+        <label for="count">How many listings do you have?</label>
+        <select id="count" name="listings">
+          <option value="1-20">1 – 20</option>
+          <option value="21-100">21 – 100</option>
+          <option value="101-500">101 – 500</option>
+          <option value="500+">500+</option>
+        </select>
+        <button type="submit">Send me the early build</button>
+        <p class="fine" id="formnote">
+          One email when it’s ready. No drip campaign, no “limited time”.
+          If it turns out this isn’t worth building, I’ll say so and you’ll hear nothing.
+        </p>
+      </form>
+      <div id="thanks" hidden>
+        <p class="thanks-title">You’re on the list.</p>
+        <p class="fine">
+          That’s one email, when the first build is ready. Nothing in between.
+          If the answer turns out to be “nobody wants this”, you’ll get one email saying so.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Questions</h2>
+    <dl class="faq">
+      <dt>Is it a Chrome extension?</dt>
+      <dd>Yes. It works on any listing you paste in — and directly on the listing page you’re already viewing.</dd>
+
+      <dt>Will it connect to my Etsy shop?</dt>
+      <dd>No. That’s deliberate. Connecting your shop is the single biggest reason people don’t try tools like this.</dd>
+
+      <dt>How much will it cost?</dt>
+      <dd>Planned around $7/month, with the option to cancel in one click. If you only need it for a week, you pay for a week.</dd>
+
+      <dt>When does this ship?</dt>
+      <dd>Building it now. The waitlist is how I decide what to build first — if there’s no demand, there’ll be no launch.</dd>
+    </dl>
+  </section>
+
+  <footer>
+    <span>Listing Coach — an independent tool for Etsy sellers</span>
+    <span>Not affiliated with Etsy, Inc.</span>
+  </footer>
+
+</div>
+<script>
+(function () {
+  var form = document.getElementById('waitlist');
+  var thanks = document.getElementById('thanks');
+  var note = document.getElementById('formnote');
+
+  function showThanks() {
+    form.hidden = true;
+    thanks.hidden = false;
+    thanks.scrollIntoView({ block: 'center' });
+  }
+  if (location.hash === '#thanks') showThanks();
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = form.querySelector('button');
+    var label = btn.textContent;
+    var data = {};
+    new FormData(form).forEach(function (v, k) { data[k] = v; });
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    fetch('https://formsubmit.co/ajax/idafoo@sina.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function (res) {
+      if (!res.ok) throw new Error(res.status);
+      showThanks();
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = label;
+      note.innerHTML = 'That didn’t go through. Email me instead: <a href="mailto:idafoo@sina.com?subject=Listing%20Coach">idafoo@sina.com</a>';
+    });
+  });
+})();
+</script>
+</body>
+</html>
